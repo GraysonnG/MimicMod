@@ -77,24 +77,25 @@ public class Mimic extends AbstractMonster{
 
 	private MimicType type;
 
-	private enum MimicType {
+	public enum MimicType {
 		SMALL,
 		MEDIUM,
 		LARGE
 	}
 
-	public Mimic(){
+	public Mimic(MimicType mimType){
 		super(NAME, ID, 80, 0.0f, 0.0f, 100f, 100f, null);
-		int lv = AbstractDungeon.monsterRng.random(2);
-		switch (lv){
-			case 0:
-				this.type = MimicType.SMALL;
+		int lv = 0;
+
+		switch(mimType){
+			case SMALL:
+				lv = 0;
 				break;
-			case 1:
-				this.type = MimicType.MEDIUM;
+			case MEDIUM:
+				lv = 1;
 				break;
-			case 2:
-				this.type = MimicType.LARGE;
+			case LARGE:
+				lv = 2;
 				break;
 		}
 
@@ -134,6 +135,7 @@ public class Mimic extends AbstractMonster{
 		AbstractDungeon.actionManager.addToBottom(new ApplyPowerAction(AbstractDungeon.player, this, offGuard));
 		this.boo_surprise = AbstractDungeon.player.energy.energy - 1;
     }
+
 	private void setMoveNow(byte nextTurn) {
 		switch (nextTurn) {
             case CLOSE_LID: {
@@ -218,7 +220,6 @@ public class Mimic extends AbstractMonster{
             }
         }
     }
-
 
     @Override
     protected void getMove(final int num) {
