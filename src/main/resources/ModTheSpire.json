@@ -1,0 +1,11 @@
+{
+	"modid": "mimicmod",
+	"name": "Mimic Mod",
+	"author_list": ["Blank The Evil", "The_Evil_Pickle"],
+	"description": "Adds Mimics",
+	"dependencies" : ["basemod"],
+	"version": "0.0.0",
+	"sts_version": "10-12-2018",
+	"mts_version": "3.2.0",
+	"update_json": ""
+}
