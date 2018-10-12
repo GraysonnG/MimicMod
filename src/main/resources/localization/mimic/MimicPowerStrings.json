@@ -1,0 +1,9 @@
+{
+  "MimicSurprisePower": {
+    "NAME": "Surprised",
+    "DESCRIPTIONS": [
+	"Lose #b", 
+	" [E] each turn. NL Is reduced by #b1 at the end of your turn."
+    ]
+  }
+}

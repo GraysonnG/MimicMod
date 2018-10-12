@@ -1,0 +1,14 @@
+{
+  "Mimic": {
+    "MOVES": [
+      "Close Lid",
+      "Blade Mimicry",
+      "Mad Mimicry",
+      "BOO!"
+    ],
+    "NAME": "Mimic",
+    "DIALOG": [
+      "Off-guard"
+    ]
+  }
+}
