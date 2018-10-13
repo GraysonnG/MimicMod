@@ -1,10 +1,12 @@
 package mimicmod;
 
 import basemod.BaseMod;
+import basemod.interfaces.EditCardsSubscriber;
 import basemod.interfaces.EditStringsSubscriber;
 import basemod.interfaces.PostInitializeSubscriber;
 
 import com.badlogic.gdx.Gdx;
+import com.evacipated.cardcrawl.modthespire.lib.SpireConfig;
 import com.evacipated.cardcrawl.modthespire.lib.SpireInitializer;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.ImageMaster;
@@ -12,21 +14,26 @@ import com.megacrit.cardcrawl.localization.CardStrings;
 import com.megacrit.cardcrawl.localization.MonsterStrings;
 import com.megacrit.cardcrawl.localization.PowerStrings;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import com.megacrit.cardcrawl.relics.AbstractRelic;
+import mimicmod.cards.MimicStatus;
 import mimicmod.monsters.Mimic;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @SpireInitializer
-public class MimicMod implements PostInitializeSubscriber, EditStringsSubscriber {
+public class MimicMod implements PostInitializeSubscriber, EditStringsSubscriber, EditCardsSubscriber {
 
 	public static final Logger logger = LogManager.getLogger(MimicMod.class.getName());
 	public static final String VERSION = "0.0.0";
 
+	public static int spawnRate = 30;
+
 	public MimicMod(){
 		BaseMod.subscribe(this);
+		BaseMod.subscribe(new MimicModInit());
 	}
 
 	public static void initialize() {
@@ -34,9 +41,39 @@ public class MimicMod implements PostInitializeSubscriber, EditStringsSubscriber
 		new MimicMod();
 	}
 
+	public static void save() {
+		try{
+			SpireConfig config = new SpireConfig("mimicmod", "settings");
+			config.setInt("spawnRate", spawnRate);
+			config.save();
+		}catch(IOException | NumberFormatException e){
+			e.printStackTrace();
+		}
+	}
+
+	public static void load() {
+		try{
+			SpireConfig config = new SpireConfig("mimicmod", "settings");
+			config.load();
+			spawnRate = config.getInt("spawnRate");
+		}catch(IOException | NumberFormatException e){
+			e.printStackTrace();
+		}
+	}
+
+	public static void clear() {
+		spawnRate = 30;
+		save();
+	}
+
+	@Override
+	public void receiveEditCards() {
+		BaseMod.addCard(new MimicStatus());
+	}
+
 	@Override
 	public void receivePostInitialize() {
-		BaseMod.registerModBadge(ImageMaster.loadImage("img/mimicmod/modbadge.png"), "Mimic Mod", "Blank The Evil, The_Evil_Pickle", "Adds Mimics.", null);
+
 	}
 
 	@Override

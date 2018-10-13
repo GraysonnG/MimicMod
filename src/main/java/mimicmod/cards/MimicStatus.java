@@ -10,21 +10,27 @@ import com.megacrit.cardcrawl.actions.unique.*;
 import com.megacrit.cardcrawl.actions.*;
 import com.megacrit.cardcrawl.core.*;
 import basemod.abstracts.*;
+import com.megacrit.cardcrawl.ui.panels.EnergyPanel;
 import mimicmod.actions.MimicHandCardAction;
 
 public class MimicStatus extends CustomCard
 {
-    public static final String ID = "MimicStatus";
+    public static final String ID = "mimicmod:MimicStatus";
     private static final CardStrings cardStrings;
     public static final String NAME;
     public static final String DESCRIPTION;
     private static final int COST = 1;
     
     public MimicStatus() {
-        super("MimicStatus", MimicStatus.NAME, "cards/replay/replayBetaCurse.png", 1, MimicStatus.DESCRIPTION, CardType.STATUS, CardColor.COLORLESS, CardRarity.COMMON, CardTarget.SELF);
+        super(ID, MimicStatus.NAME, "img/mimicmod/cards/mimicstatus.png", 1, MimicStatus.DESCRIPTION, CardType.STATUS, CardColor.COLORLESS, CardRarity.COMMON, CardTarget.SELF);
         this.exhaust = true;
     }
-    
+
+    @Override
+    public boolean canUse(AbstractPlayer p, AbstractMonster m) {
+        return this.cardPlayable(m) && this.hasEnoughEnergy();
+    }
+
     @Override
     public void use(final AbstractPlayer p, final AbstractMonster m) {
         if (p.hasRelic("Medical Kit")) {
@@ -52,7 +58,7 @@ public class MimicStatus extends CustomCard
     }
     
     static {
-        cardStrings = CardCrawlGame.languagePack.getCardStrings("MimicStatus");
+        cardStrings = CardCrawlGame.languagePack.getCardStrings(ID);
         NAME = MimicStatus.cardStrings.NAME;
         DESCRIPTION = MimicStatus.cardStrings.DESCRIPTION;
     }

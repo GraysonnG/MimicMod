@@ -3,6 +3,7 @@ package mimicmod.powers;
 import com.megacrit.cardcrawl.actions.utility.*;
 import com.megacrit.cardcrawl.cards.*;
 import com.megacrit.cardcrawl.core.*;
+import com.megacrit.cardcrawl.helpers.ImageMaster;
 import com.megacrit.cardcrawl.localization.*;
 import com.megacrit.cardcrawl.powers.*;
 import com.megacrit.cardcrawl.actions.*;
@@ -36,8 +37,8 @@ public class MimicSurprisePower
 		this.justApplied = justApplied;
         this.isTurnBased = true;
 		this.description = DESCRIPTIONS[0];
-		//loadRegion("surprise");
-		//this.img = new Texture("img/powers/Reflection.png");
+		this.loadRegion("confusion");
+		this.updateDescription();
 	}
 	
 	@Override
@@ -56,17 +57,18 @@ public class MimicSurprisePower
     }*/
 	
 	@Override
-    public void atEndOfRound() {
-        if (this.justApplied) {
-            this.justApplied = false;
-            return;
-        }
-        if (this.amount == 0) {
-            AbstractDungeon.actionManager.addToBottom(new RemoveSpecificPowerAction(this.owner, this.owner, "MimicSurprisePower"));
-        }
-        else {
-            AbstractDungeon.actionManager.addToBottom(new ReducePowerAction(this.owner, this.owner, "MimicSurprisePower", 1));
-        }
+    public void atEndOfTurn(boolean isPlayer) {
+		if(isPlayer) {
+			if (this.justApplied) {
+				this.justApplied = false;
+				return;
+			}
+			if (this.amount == 0) {
+				AbstractDungeon.actionManager.addToBottom(new RemoveSpecificPowerAction(this.owner, this.owner, "MimicSurprisePower"));
+			} else {
+				AbstractDungeon.actionManager.addToBottom(new ReducePowerAction(this.owner, this.owner, this, 1));
+			}
+		}
     }
 	
 	@Override

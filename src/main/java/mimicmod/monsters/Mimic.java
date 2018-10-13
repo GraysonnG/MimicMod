@@ -24,7 +24,6 @@ import com.megacrit.cardcrawl.helpers.Hitbox;
 import com.megacrit.cardcrawl.helpers.ImageMaster;
 import com.megacrit.cardcrawl.localization.MonsterStrings;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
-import com.megacrit.cardcrawl.monsters.AbstractMonster.Intent;
 import com.megacrit.cardcrawl.powers.AbstractPower;
 import com.megacrit.cardcrawl.powers.ArtifactPower;
 import com.megacrit.cardcrawl.powers.EntanglePower;
@@ -45,7 +44,7 @@ public class Mimic extends AbstractMonster{
 	private static final String NAME;
     public static final String[] MOVES;
     public static final String[] DIALOG;
-    private static final int[] HP = {80, 120, 160};
+    private static final int[] HP = {80, 120, 250};
     private static final int HP_DV = 2;
     private static final int A_HP = 15;
 	private static final int[] LV_ARMOR_MAX = {6, 10, 15};
@@ -163,7 +162,7 @@ public class Mimic extends AbstractMonster{
 				break;
 			}
             case DOUBLE_STRIKE: {
-				this.setMove(nextTurn, Intent.ATTACK, this.damage.get(0).base, 2, true);
+				this.setMove(nextTurn, Intent.ATTACK_DEBUFF, this.damage.get(0).base, 2, true);
 				break;
 			}
             case BLADE_MIMICRY: {
@@ -233,7 +232,7 @@ public class Mimic extends AbstractMonster{
                 break;
             }
             case BOO: {
-				AbstractDungeon.actionManager.addToBottom(new ApplyPowerAction(AbstractDungeon.player, this, new MimicSurprisePower(AbstractDungeon.player, this.boo_surprise, true), this.boo_surprise));
+				AbstractDungeon.actionManager.addToBottom(new ApplyPowerAction(AbstractDungeon.player, this, new MimicSurprisePower(AbstractDungeon.player, this.boo_surprise, false), this.boo_surprise));
 				AbstractDungeon.actionManager.addToBottom(new MakeTempCardInDiscardAction(new Dazed(), this.boo_dazed));
 				AbstractDungeon.actionManager.addToBottom(new RollMoveAction(this));
                 break;

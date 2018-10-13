@@ -4,17 +4,20 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.megacrit.cardcrawl.cards.AbstractCard;
+import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.Hitbox;
 import com.megacrit.cardcrawl.helpers.ImageMaster;
 import com.megacrit.cardcrawl.helpers.controller.CInputActionSet;
 import com.megacrit.cardcrawl.helpers.input.InputHelper;
+import com.megacrit.cardcrawl.relics.AbstractRelic;
 import com.megacrit.cardcrawl.rewards.chests.AbstractChest;
 import com.megacrit.cardcrawl.rewards.chests.LargeChest;
 import com.megacrit.cardcrawl.rewards.chests.MediumChest;
 import com.megacrit.cardcrawl.rewards.chests.SmallChest;
 import com.megacrit.cardcrawl.rooms.AbstractRoom;
+import com.megacrit.cardcrawl.vfx.combat.SmokeBombEffect;
 import mimicmod.MimicMod;
 import mimicmod.monsters.Mimic;
 
@@ -33,6 +36,7 @@ public class MimicRoom extends AbstractRoom {
 	public void onPlayerEntry() {
 		this.playBGM(null);
 		chest = new MimicChest(getRandomMimicType());
+		AbstractDungeon.overlayMenu.proceedButton.show();
 	}
 
 	public static Mimic.MimicType getRandomMimicType(){
@@ -50,6 +54,7 @@ public class MimicRoom extends AbstractRoom {
 		if(chest != null && this.phase != RoomPhase.COMBAT){
 			chest.update();
 			if((chest.hb.hovered && InputHelper.justClickedLeft) || CInputActionSet.select.isJustPressed()) {
+				AbstractDungeon.overlayMenu.proceedButton.hide();
 				if (this.monsters == null) {
 					this.monsters = AbstractDungeon.getMonsterForRoomCreation();
 				}
@@ -58,6 +63,13 @@ public class MimicRoom extends AbstractRoom {
 				this.monsters.init();
 				this.addGoldToRewards(AbstractDungeon.eventRng.random(30, 40));
 				this.addRelicToRewards(AbstractDungeon.returnRandomRelic(MimicMod.getRelicTierFromMimicType(chest.type)));
+				for(AbstractRelic relic : AbstractDungeon.player.relics){
+					relic.onChestOpen(false);
+				}
+				for(AbstractRelic relic : AbstractDungeon.player.relics){
+					relic.onChestOpenAfter(false);
+				}
+
 				enterCombat();
 			}
 		}
@@ -68,6 +80,8 @@ public class MimicRoom extends AbstractRoom {
 		AbstractDungeon.getCurrRoom().monsters.init();
 		AbstractRoom.waitTimer = 0.1f;
 		AbstractDungeon.player.preBattlePrep();
+		AbstractDungeon.effectsQueue.add(new SmokeBombEffect(this.chest.hb.cX, this.chest.hb.y));
+		CardCrawlGame.sound.play("INTIMIDATE");
 	}
 
 	@Override

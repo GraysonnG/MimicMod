@@ -6,6 +6,7 @@ import com.megacrit.cardcrawl.map.MapGenerator;
 import com.megacrit.cardcrawl.map.MapRoomNode;
 import com.megacrit.cardcrawl.rooms.TreasureRoom;
 import javassist.CtBehavior;
+import mimicmod.MimicMod;
 import mimicmod.rooms.MimicRoom;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class CreateMimicRoomPatch {
 			}
 		}
 
-		if(AbstractDungeon.mapRng.random(9) == 0) {
+		if(AbstractDungeon.mapRng.random(99) <= (MimicMod.spawnRate - 1)) {
 			for (MapRoomNode treasureRoom : chestNodes) {
 				treasureRoom.setRoom(new MimicRoom());
 			}

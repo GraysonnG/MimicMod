@@ -5,7 +5,7 @@
 	"description": "Adds Mimics",
 	"dependencies" : ["basemod"],
 	"version": "0.0.0",
-	"sts_version": "10-04-2018",
+	"sts_version": "10-11-2018",
 	"mts_version": "3.2.0",
 	"update_json": ""
 }
