@@ -9,7 +9,6 @@ import com.megacrit.cardcrawl.actions.*;
 import com.megacrit.cardcrawl.actions.common.*;
 import com.megacrit.cardcrawl.dungeons.*;
 import com.badlogic.gdx.graphics.*;
-import replayTheSpire.*;
 
 public class MimicSurprisePower
   extends AbstractPower

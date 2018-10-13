@@ -1,6 +1,7 @@
 package mimicmod.monsters;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.megacrit.cardcrawl.actions.AbstractGameAction;
 import com.megacrit.cardcrawl.actions.GameActionManager;
@@ -19,6 +20,8 @@ import com.megacrit.cardcrawl.cards.status.Slimed;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.helpers.Hitbox;
+import com.megacrit.cardcrawl.helpers.ImageMaster;
 import com.megacrit.cardcrawl.localization.MonsterStrings;
 import com.megacrit.cardcrawl.monsters.AbstractMonster;
 import com.megacrit.cardcrawl.monsters.AbstractMonster.Intent;
@@ -84,20 +87,26 @@ public class Mimic extends AbstractMonster{
 	}
 
 	public Mimic(MimicType mimType){
-		super(NAME, ID, 80, 0.0f, 0.0f, 100f, 100f, null);
+		super(NAME, ID, 80, 0.0f, 0.0f, 200f, 200f, null);
 		int lv = 0;
 
 		switch(mimType){
 			case SMALL:
 				lv = 0;
+				this.setImage(ImageMaster.loadImage("img/mimicmod/monsters/mimicSmall.png"),295f, 153f);
 				break;
 			case MEDIUM:
 				lv = 1;
+				this.setImage(ImageMaster.loadImage("img/mimicmod/monsters/mimicMedium.png"), 273f, 252f);
 				break;
 			case LARGE:
 				lv = 2;
+				this.setImage(ImageMaster.loadImage("img/mimicmod/monsters/mimicLarge.png"), 453f, 317f);
 				break;
 		}
+
+		this.dialogX = 0f;//SET THESE LATER
+		this.dialogY = 0f;
 
 		this.lid_artifact = 1;
         if (AbstractDungeon.ascensionLevel >= 8) {
@@ -126,6 +135,17 @@ public class Mimic extends AbstractMonster{
         this.damage.add(new DamageInfo(this, this.doubleStrike_dmg));
         this.damage.add(new DamageInfo(this, this.bigHit_dmg));
 		this.boo_surprise = 2;
+	}
+
+
+	public void setImage(Texture img, float hb_w, float hb_h){
+		this.img = img;
+		this.hb_w = hb_w * Settings.scale;
+		this.hb_h = hb_h * Settings.scale;
+		this.hb = new Hitbox(this.hb_w, this.hb_h);
+		this.healthHb = new Hitbox(this.hb_w, 72f * Settings.scale);
+		this.refreshHitboxLocation();
+		this.refreshIntentHbLocation();
 	}
 
     @Override
