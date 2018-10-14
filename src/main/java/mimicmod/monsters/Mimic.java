@@ -12,6 +12,7 @@ import com.megacrit.cardcrawl.actions.common.ApplyPowerAction;
 import com.megacrit.cardcrawl.actions.common.DamageAction;
 import com.megacrit.cardcrawl.actions.common.MakeTempCardInDiscardAction;
 import com.megacrit.cardcrawl.actions.common.MakeTempCardInDiscardAndDeckAction;
+import com.megacrit.cardcrawl.actions.common.MakeTempCardInDrawPileAction;
 import com.megacrit.cardcrawl.actions.common.RollMoveAction;
 import com.megacrit.cardcrawl.actions.utility.WaitAction;
 import com.megacrit.cardcrawl.cards.DamageInfo;
@@ -20,6 +21,7 @@ import com.megacrit.cardcrawl.cards.status.Slimed;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.helpers.EnemyData.MonsterType;
 import com.megacrit.cardcrawl.helpers.Hitbox;
 import com.megacrit.cardcrawl.helpers.ImageMaster;
 import com.megacrit.cardcrawl.localization.MonsterStrings;
@@ -34,6 +36,7 @@ import com.megacrit.cardcrawl.powers.ThornsPower;
 import com.megacrit.cardcrawl.powers.WeakPower;
 import com.megacrit.cardcrawl.vfx.combat.BiteEffect;
 
+import mimicmod.MimicMod;
 import mimicmod.cards.MimicStatus;
 import mimicmod.powers.MimicSurprisePower;
 
@@ -47,7 +50,7 @@ public class Mimic extends AbstractMonster{
     private static final int[] HP = {80, 120, 250};
     private static final int HP_DV = 2;
     private static final int A_HP = 15;
-	private static final int[] LV_ARMOR_MAX = {6, 10, 15};
+	private static final int[] LV_ARMOR_MAX = {5, 10, 15};
 	private static final int[] LV_ARMOR_GAIN = {4, 5, 5};
 	private static final int[] LV_DOUBLESTRIKE_DMG = {2, 2, 3};
 	private static final int A_DOUBLESTRIKE_DMG = 1;
@@ -77,7 +80,7 @@ public class Mimic extends AbstractMonster{
     private static final byte BOO = 6;
     private boolean firstMove;
 
-	private MimicType type;
+	private MimicType mimType;
 
 	public enum MimicType {
 		SMALL,
@@ -88,7 +91,7 @@ public class Mimic extends AbstractMonster{
 	public Mimic(MimicType mimType){
 		super(NAME, ID, 80, 0.0f, 0.0f, 200f, 200f, null);
 		int lv = 0;
-
+		this.mimType = mimType;
 		switch(mimType){
 			case SMALL:
 				lv = 0;
@@ -103,10 +106,14 @@ public class Mimic extends AbstractMonster{
 				this.setImage(ImageMaster.loadImage("img/mimicmod/monsters/mimicLarge.png"), 453f, 317f);
 				break;
 		}
-
+		if (AbstractDungeon.bossCount > 2) {
+			lv = 2;
+		}
 		this.dialogX = 0f;//SET THESE LATER
 		this.dialogY = 0f;
-
+		if (MimicMod.areElites)
+			this.type = EnemyType.ELITE;
+		this.firstMove = true;
 		this.lid_artifact = 1;
         if (AbstractDungeon.ascensionLevel >= 8) {
             this.setHp(HP[lv] - HP_DV + A_HP, HP[lv] - HP_DV + A_HP);
@@ -192,11 +199,18 @@ public class Mimic extends AbstractMonster{
     public void takeTurn() {
         switch (this.nextMove) {
             case CLOSE_LID: {
+            	if (this.firstMove && (this.mimType == MimicType.SMALL || this.mimType == MimicType.MEDIUM)) {
+            		this.lid_armor_gain--;
+            	}
 				if (!this.hasPower(PlatedArmorPower.POWER_ID) || this.getPower(PlatedArmorPower.POWER_ID).amount + this.lid_armor_gain <= this.lid_armor_max) {
 					AbstractDungeon.actionManager.addToBottom(new ApplyPowerAction(this, this, new PlatedArmorPower(this, this.lid_armor_gain), this.lid_armor_gain));
 				} else if (this.getPower(PlatedArmorPower.POWER_ID).amount < this.lid_armor_max) {
 					AbstractDungeon.actionManager.addToBottom(new ApplyPowerAction(this, this, new PlatedArmorPower(this, this.lid_armor_max - this.getPower(PlatedArmorPower.POWER_ID).amount), this.lid_armor_max - this.getPower(PlatedArmorPower.POWER_ID).amount));
 				}
+				if (this.firstMove && (this.mimType == MimicType.SMALL || this.mimType == MimicType.MEDIUM)) {
+					this.lid_armor_gain++;
+				}
+				this.firstMove = false;
 				AbstractDungeon.actionManager.addToBottom(new ApplyPowerAction(this, this, new ArtifactPower(this, this.lid_artifact), this.lid_artifact));
 				AbstractDungeon.actionManager.addToBottom(new RollMoveAction(this));
                 break;
@@ -207,7 +221,11 @@ public class Mimic extends AbstractMonster{
 					AbstractDungeon.actionManager.addToBottom(new VFXAction(new BiteEffect(AbstractDungeon.player.hb.cX + MathUtils.random(-25.0f, 25.0f) * Settings.scale, AbstractDungeon.player.hb.cY + MathUtils.random(-25.0f, 25.0f) * Settings.scale, Color.GOLD.cpy()), 0.0f));
 					AbstractDungeon.actionManager.addToBottom(new DamageAction(AbstractDungeon.player, this.damage.get(0), AbstractGameAction.AttackEffect.NONE));
                 }
-				AbstractDungeon.actionManager.addToBottom(new MakeTempCardInDiscardAndDeckAction(new Slimed()));
+                if (this.mimType == MimicType.SMALL && AbstractDungeon.bossCount < 1) {
+                	AbstractDungeon.actionManager.addToBottom(new MakeTempCardInDrawPileAction(new Slimed(), 1, true, false));
+                } else {
+                	AbstractDungeon.actionManager.addToBottom(new MakeTempCardInDiscardAndDeckAction(new Slimed()));
+                }
 				AbstractDungeon.actionManager.addToBottom(new RollMoveAction(this));
                 break;
             }
@@ -242,7 +260,10 @@ public class Mimic extends AbstractMonster{
 
     @Override
     protected void getMove(final int num) {
-		
+		if (this.firstMove) {
+			this.setMoveNow(CLOSE_LID);
+			return;
+		}
 		if (this.lastMove(CLOSE_LID)) {
 			this.setMoveNow(DOUBLE_STRIKE);
 			return;

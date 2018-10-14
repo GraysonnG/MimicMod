@@ -30,6 +30,7 @@ public class MimicMod implements PostInitializeSubscriber, EditStringsSubscriber
 	public static final String VERSION = "0.0.0";
 
 	public static int spawnRate = 30;
+	public static boolean areElites = false;
 
 	public MimicMod(){
 		BaseMod.subscribe(this);
@@ -45,6 +46,7 @@ public class MimicMod implements PostInitializeSubscriber, EditStringsSubscriber
 		try{
 			SpireConfig config = new SpireConfig("mimicmod", "settings");
 			config.setInt("spawnRate", spawnRate);
+			config.setBool("areElites", areElites);
 			config.save();
 		}catch(IOException | NumberFormatException e){
 			e.printStackTrace();
@@ -55,7 +57,12 @@ public class MimicMod implements PostInitializeSubscriber, EditStringsSubscriber
 		try{
 			SpireConfig config = new SpireConfig("mimicmod", "settings");
 			config.load();
-			spawnRate = config.getInt("spawnRate");
+			if (config.has("spawnRate")) {
+				spawnRate = config.getInt("spawnRate");
+			}
+			if (config.has("areElites")) {
+				areElites = config.getBool("areElites");
+			}
 		}catch(IOException | NumberFormatException e){
 			e.printStackTrace();
 		}

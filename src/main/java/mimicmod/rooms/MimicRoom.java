@@ -9,15 +9,21 @@ import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.Hitbox;
 import com.megacrit.cardcrawl.helpers.ImageMaster;
+import com.megacrit.cardcrawl.helpers.ModHelper;
 import com.megacrit.cardcrawl.helpers.controller.CInputActionSet;
 import com.megacrit.cardcrawl.helpers.input.InputHelper;
 import com.megacrit.cardcrawl.relics.AbstractRelic;
+import com.megacrit.cardcrawl.relics.BlackStar;
+import com.megacrit.cardcrawl.relics.PreservedInsect;
+import com.megacrit.cardcrawl.relics.Sling;
 import com.megacrit.cardcrawl.rewards.chests.AbstractChest;
 import com.megacrit.cardcrawl.rewards.chests.LargeChest;
 import com.megacrit.cardcrawl.rewards.chests.MediumChest;
 import com.megacrit.cardcrawl.rewards.chests.SmallChest;
 import com.megacrit.cardcrawl.rooms.AbstractRoom;
 import com.megacrit.cardcrawl.vfx.combat.SmokeBombEffect;
+
+import basemod.ReflectionHacks;
 import mimicmod.MimicMod;
 import mimicmod.monsters.Mimic;
 
@@ -30,6 +36,7 @@ public class MimicRoom extends AbstractRoom {
 		this.mapSymbol = "MIM";
 		this.mapImg = ImageMaster.MAP_NODE_TREASURE;
 		this.mapImgOutline = ImageMaster.MAP_NODE_TREASURE_OUTLINE;
+		this.eliteTrigger = MimicMod.areElites;
 	}
 
 	@Override
@@ -44,8 +51,18 @@ public class MimicRoom extends AbstractRoom {
 			return Mimic.MimicType.SMALL;
 		else if(AbstractDungeon.bossCount == 1)
 			return Mimic.MimicType.MEDIUM;
-		else
+		else if(AbstractDungeon.bossCount == 2)
 			return Mimic.MimicType.LARGE;
+		else {
+			switch(AbstractDungeon.miscRng.random(2)) {
+			case 0:
+				return Mimic.MimicType.SMALL;
+			case 1:
+				return Mimic.MimicType.MEDIUM;
+			default:
+				return Mimic.MimicType.LARGE;
+			}
+		}
 	}
 
 	@Override
@@ -65,16 +82,35 @@ public class MimicRoom extends AbstractRoom {
 				this.addRelicToRewards(AbstractDungeon.returnRandomRelic(MimicMod.getRelicTierFromMimicType(chest.type)));
 				for(AbstractRelic relic : AbstractDungeon.player.relics){
 					relic.onChestOpen(false);
+					if (MimicMod.areElites) {
+						if (relic.relicId.equals(BlackStar.ID)) {
+							this.addNoncampRelicToRewards(this.returnRandomRelicTier());
+							ReflectionHacks.setPrivate((Object)relic, (Class)AbstractRelic.class, "pulse", (Object)true);
+				            relic.beginPulse();
+						}
+					}
 				}
 				for(AbstractRelic relic : AbstractDungeon.player.relics){
 					relic.onChestOpenAfter(false);
 				}
-
 				enterCombat();
 			}
 		}
 	}
-
+	private AbstractRelic.RelicTier returnRandomRelicTier() {
+        int roll = AbstractDungeon.relicRng.random(0, 99);
+        if (ModHelper.isModEnabled("Elite Swarm")) {
+            roll += 10;
+        }
+        if (roll < 50) {
+            return AbstractRelic.RelicTier.COMMON;
+        }
+        if (roll > 82) {
+            return AbstractRelic.RelicTier.RARE;
+        }
+        return AbstractRelic.RelicTier.UNCOMMON;
+    }
+	
 	public void enterCombat() {
 		AbstractDungeon.getCurrRoom().phase = AbstractRoom.RoomPhase.COMBAT;
 		AbstractDungeon.getCurrRoom().monsters.init();
