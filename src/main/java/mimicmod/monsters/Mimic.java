@@ -269,7 +269,7 @@ public class Mimic extends AbstractMonster{
 			return;
 		}
 		if (this.lastMove(DOUBLE_STRIKE)) {
-			if (num > 66 || GameActionManager.turn < 5) {
+			if (num > 66 || GameActionManager.turn < 5 && num > 20) {
 				this.setMoveNow(BLADE_MIMICRY);
 			} else {
 				this.setMoveNow(MAD_MIMICRY);

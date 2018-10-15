@@ -18,30 +18,9 @@ import com.megacrit.cardcrawl.actions.common.RelicAboveCreatureAction;
 import com.megacrit.cardcrawl.characters.AbstractPlayer;
 
 public class EliteCombatPatch {
-	@SpirePatch(clz=AbstractPlayer.class, method = "applyStartOfCombatLogic")
-	public static class StartCombatPatch {
-		public static void Prefix(AbstractPlayer __Instance) {
-			if (MimicMod.areElites && AbstractDungeon.getCurrRoom() != null && AbstractDungeon.getCurrRoom() instanceof MimicRoom) {
-				for (AbstractRelic relic : __Instance.relics) {
-					if (relic.relicId.equals(PreservedInsect.ID)) {
-						relic.flash();
-			            for (final AbstractMonster m : AbstractDungeon.getCurrRoom().monsters.monsters) {
-			                if (m.currentHealth > (int)(m.maxHealth * (0.75f))) {
-			                    m.currentHealth = (int)(m.maxHealth * (0.75f));
-			                    m.healthBarUpdatedEvent();
-			                }
-			            }
-			            AbstractDungeon.actionManager.addToTop(new RelicAboveCreatureAction(__Instance, relic));
-					}
-					if (relic.relicId.equals(Sling.ID)) {
-						relic.flash();
-			            AbstractDungeon.actionManager.addToTop(new ApplyPowerAction(AbstractDungeon.player, AbstractDungeon.player, new StrengthPower(AbstractDungeon.player, 2), 2));
-			            AbstractDungeon.actionManager.addToTop(new RelicAboveCreatureAction(AbstractDungeon.player, relic));
-					}
-				}
-			}
-		}
-	}
+	
+	//Shoutout to Anthony for implementing use of eliteTrigger so we don't have to fuck around patching relics as much.
+	
 	@SpirePatch(clz=BlackStar.class, method = "onVictory")
 	public static class BlackstarPatch {
 		public static void Postfix(BlackStar __Instance) {

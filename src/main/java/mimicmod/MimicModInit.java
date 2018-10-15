@@ -18,7 +18,7 @@ public class MimicModInit implements PostInitializeSubscriber {
 		ModPanel settingsPanel = new ModPanel();
 
 		ModSlider spawnRateSlider = new ModSlider("Spawn Rate",
-			0f,
+			350f,
 			650f,
 			100, "%", settingsPanel, (me) -> {
 			int val = Math.round(me.value * me.multiplier);
@@ -30,7 +30,20 @@ public class MimicModInit implements PostInitializeSubscriber {
 
 		settingsPanel.addUIElement(spawnRateSlider);
 
-		ModLabeledToggleButton eliteButton = new ModLabeledToggleButton("Mimics count as Elites", 300f, 500f, Color.WHITE, FontHelper.buttonLabelFont, MimicMod.areElites, settingsPanel, (me) -> {}, (me) -> {
+		ModSlider eventSpawnRateSlider = new ModSlider("? Room Spawn Rate",
+			350f,
+			600f,
+			100, "%", settingsPanel, (me) -> {
+			int val = Math.round(me.value * me.multiplier);
+			MimicMod.eventSpawnRate = val;
+			MimicMod.save();
+		});
+
+		eventSpawnRateSlider.setValue((float)MimicMod.eventSpawnRate / 100f);
+
+		settingsPanel.addUIElement(eventSpawnRateSlider);
+
+		ModLabeledToggleButton eliteButton = new ModLabeledToggleButton("Relic effects count Mimics as Elites", 350f, 500f, Color.WHITE, FontHelper.buttonLabelFont, MimicMod.areElites, settingsPanel, (me) -> {}, (me) -> {
 			MimicMod.areElites = me.enabled;
 			MimicMod.save();
 		});
