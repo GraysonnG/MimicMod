@@ -21,6 +21,7 @@ import com.megacrit.cardcrawl.rewards.chests.LargeChest;
 import com.megacrit.cardcrawl.rewards.chests.MediumChest;
 import com.megacrit.cardcrawl.rewards.chests.SmallChest;
 import com.megacrit.cardcrawl.rooms.AbstractRoom;
+import com.megacrit.cardcrawl.rooms.EventRoom;
 import com.megacrit.cardcrawl.vfx.combat.SmokeBombEffect;
 
 import basemod.ReflectionHacks;
