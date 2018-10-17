@@ -13,7 +13,8 @@ Adds Mimics to Slay The Spire. Be careful opening chests!
 
 ## Contact
 - Blank The Evil#6534 on Discord
+- The_Evil_Pickle#2065 on Discord
 - blanktheevil@gmail.com I don't check this email often.
 
-- The_Evil_Pickle#2065 on Discord
+
 
