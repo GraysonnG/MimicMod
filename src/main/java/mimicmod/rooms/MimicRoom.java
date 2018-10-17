@@ -14,14 +14,11 @@ import com.megacrit.cardcrawl.helpers.controller.CInputActionSet;
 import com.megacrit.cardcrawl.helpers.input.InputHelper;
 import com.megacrit.cardcrawl.relics.AbstractRelic;
 import com.megacrit.cardcrawl.relics.BlackStar;
-import com.megacrit.cardcrawl.relics.PreservedInsect;
-import com.megacrit.cardcrawl.relics.Sling;
 import com.megacrit.cardcrawl.rewards.chests.AbstractChest;
 import com.megacrit.cardcrawl.rewards.chests.LargeChest;
 import com.megacrit.cardcrawl.rewards.chests.MediumChest;
 import com.megacrit.cardcrawl.rewards.chests.SmallChest;
 import com.megacrit.cardcrawl.rooms.AbstractRoom;
-import com.megacrit.cardcrawl.rooms.EventRoom;
 import com.megacrit.cardcrawl.vfx.combat.SmokeBombEffect;
 
 import basemod.ReflectionHacks;
@@ -69,7 +66,7 @@ public class MimicRoom extends AbstractRoom {
 	@Override
 	public void update(){
 		super.update();
-		if(chest != null && this.phase != RoomPhase.COMBAT){
+		if(chest != null && this.phase == RoomPhase.INCOMPLETE && !AbstractDungeon.loading_post_combat){
 			chest.update();
 			if((chest.hb.hovered && InputHelper.justClickedLeft) || CInputActionSet.select.isJustPressed()) {
 				AbstractDungeon.overlayMenu.proceedButton.hide();
@@ -124,7 +121,7 @@ public class MimicRoom extends AbstractRoom {
 	@Override
 	public void render(SpriteBatch sb){
 		super.render(sb);
-		if(chest != null && this.phase != RoomPhase.COMBAT){
+		if(chest != null && this.phase == RoomPhase.INCOMPLETE && !AbstractDungeon.loading_post_combat){
 			chest.render(sb);
 			chest.hb.render(sb);
 		}

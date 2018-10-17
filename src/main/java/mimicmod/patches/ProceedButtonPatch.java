@@ -22,6 +22,7 @@ public class ProceedButtonPatch {
 			if(currentRoom instanceof MimicRoom) {
 				currentRoom.phase = AbstractRoom.RoomPhase.COMPLETE;
 				AbstractDungeon.closeCurrentScreen();
+				AbstractDungeon.previousScreen = AbstractDungeon.CurrentScreen.COMBAT_REWARD;
 				AbstractDungeon.dungeonMapScreen.open(false);
 			}
 		}
