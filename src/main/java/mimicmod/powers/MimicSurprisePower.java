@@ -46,16 +46,7 @@ public class MimicSurprisePower
 	{
 		this.description = DESCRIPTIONS[0] + this.amount + DESCRIPTIONS[1];
 	}
-	
-    /*@Override
-    public void atEndOfTurn(final boolean isPlayer) {
-		if (this.justApplied) {
-			this.justApplied = false;
-			return;
-		}
-        AbstractDungeon.actionManager.addToBottom(new RemoveSpecificPowerAction(this.owner, this.owner, "MimicSurprisePower"));
-    }*/
-	
+
 	@Override
     public void atEndOfTurn(boolean isPlayer) {
 		if(isPlayer) {

@@ -27,7 +27,7 @@ import org.apache.logging.log4j.Logger;
 public class MimicMod implements PostInitializeSubscriber, EditStringsSubscriber, EditCardsSubscriber {
 
 	public static final Logger logger = LogManager.getLogger(MimicMod.class.getName());
-	public static final String VERSION = "0.1.1";
+	public static final String VERSION = "0.1.2";
 
 	public static int spawnRate = 25;
 	public static int eventSpawnRate = 33;
@@ -38,6 +38,7 @@ public class MimicMod implements PostInitializeSubscriber, EditStringsSubscriber
 		BaseMod.subscribe(new MimicModInit());
 	}
 
+	@SuppressWarnings("unused")
 	public static void initialize() {
 		logger.info("Version: " + VERSION);
 		new MimicMod();
@@ -73,8 +74,9 @@ public class MimicMod implements PostInitializeSubscriber, EditStringsSubscriber
 		}
 	}
 
+
 	public static void clear() {
-		spawnRate = 30;
+		spawnRate = 25;
 		save();
 	}
 

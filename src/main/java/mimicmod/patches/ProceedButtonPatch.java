@@ -9,11 +9,8 @@ import mimicmod.rooms.MimicRoom;
 
 @SuppressWarnings("unused")
 public class ProceedButtonPatch {
-	@SuppressWarnings("unused")
 	@SpirePatch(clz=ProceedButton.class, method = "update")
 	public static class MimicRoomSkip {
-
-		@SuppressWarnings("unused")
 		@SpireInsertPatch(
 			rloc = 24,
 			localvars = {"currentRoom"}

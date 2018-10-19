@@ -27,7 +27,7 @@ import mimicmod.monsters.Mimic;
 
 public class MimicRoom extends AbstractRoom {
 
-	public MimicChest chest;
+	public FakeChest fakeChest;
 
 	public MimicRoom() {
 		this.phase = RoomPhase.INCOMPLETE;
@@ -40,7 +40,7 @@ public class MimicRoom extends AbstractRoom {
 	@Override
 	public void onPlayerEntry() {
 		this.playBGM(null);
-		chest = new MimicChest(getRandomMimicType());
+		fakeChest = new FakeChest(getRandomMimicType());
 		AbstractDungeon.overlayMenu.proceedButton.show();
 	}
 
@@ -66,18 +66,18 @@ public class MimicRoom extends AbstractRoom {
 	@Override
 	public void update(){
 		super.update();
-		if(chest != null && this.phase == RoomPhase.INCOMPLETE && !AbstractDungeon.loading_post_combat){
-			chest.update();
-			if((chest.hb.hovered && InputHelper.justClickedLeft) || CInputActionSet.select.isJustPressed()) {
+		if(fakeChest != null && this.phase == RoomPhase.INCOMPLETE && !AbstractDungeon.loading_post_combat){
+			fakeChest.update();
+			if((fakeChest.hb.hovered && InputHelper.justClickedLeft) || CInputActionSet.select.isJustPressed()) {
 				AbstractDungeon.overlayMenu.proceedButton.hide();
 				if (this.monsters == null) {
 					this.monsters = AbstractDungeon.getMonsterForRoomCreation();
 				}
 				this.monsters.monsters.clear();
-				this.monsters.add(new Mimic(chest.type));
+				this.monsters.add(new Mimic(fakeChest.type));
 				this.monsters.init();
 				this.addGoldToRewards(AbstractDungeon.eventRng.random(30, 40));
-				this.addRelicToRewards(AbstractDungeon.returnRandomRelic(MimicMod.getRelicTierFromMimicType(chest.type)));
+				this.addRelicToRewards(AbstractDungeon.returnRandomRelic(MimicMod.getRelicTierFromMimicType(fakeChest.type)));
 				for(AbstractRelic relic : AbstractDungeon.player.relics){
 					relic.onChestOpen(false);
 					if (MimicMod.areElites) {
@@ -114,16 +114,16 @@ public class MimicRoom extends AbstractRoom {
 		AbstractDungeon.getCurrRoom().monsters.init();
 		AbstractRoom.waitTimer = 0.1f;
 		AbstractDungeon.player.preBattlePrep();
-		AbstractDungeon.effectsQueue.add(new SmokeBombEffect(this.chest.hb.cX, this.chest.hb.y));
+		AbstractDungeon.effectsQueue.add(new SmokeBombEffect(this.fakeChest.hb.cX, this.fakeChest.hb.y));
 		CardCrawlGame.sound.play("INTIMIDATE");
 	}
 
 	@Override
 	public void render(SpriteBatch sb){
 		super.render(sb);
-		if(chest != null && this.phase == RoomPhase.INCOMPLETE && !AbstractDungeon.loading_post_combat){
-			chest.render(sb);
-			chest.hb.render(sb);
+		if(fakeChest != null && this.phase == RoomPhase.INCOMPLETE && !AbstractDungeon.loading_post_combat){
+			fakeChest.render(sb);
+			fakeChest.hb.render(sb);
 		}
 	}
 
@@ -148,12 +148,12 @@ public class MimicRoom extends AbstractRoom {
 		return AbstractCard.CardRarity.COMMON;
 	}
 
-	public class MimicChest {
+	public class FakeChest {
 		Hitbox hb;
 		Texture img;
 		Mimic.MimicType type;
 
-		public MimicChest(Mimic.MimicType type){
+		public FakeChest(Mimic.MimicType type){
 			this.type = type;
 			switch (type){
 				case SMALL:

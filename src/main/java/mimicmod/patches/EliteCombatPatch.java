@@ -20,13 +20,14 @@ import com.megacrit.cardcrawl.characters.AbstractPlayer;
 public class EliteCombatPatch {
 	
 	//Shoutout to Anthony for implementing use of eliteTrigger so we don't have to fuck around patching relics as much.
-	
+
+	@SuppressWarnings("unused")
 	@SpirePatch(clz=BlackStar.class, method = "onVictory")
 	public static class BlackstarPatch {
-		public static void Postfix(BlackStar __Instance) {
+		public static void Postfix(BlackStar __instance) {
 			if (MimicMod.areElites && AbstractDungeon.getCurrRoom() instanceof MimicRoom) {
-				__Instance.flash();
-				ReflectionHacks.setPrivate((Object)__Instance, (Class)AbstractRelic.class, "pulse", (Object)false);
+				__instance.flash();
+				ReflectionHacks.setPrivate(__instance, AbstractRelic.class, "pulse", false);
 	        }
 		}
 	}

@@ -12,6 +12,7 @@ import mimicmod.rooms.MimicRoom;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unused")
 @SpirePatch(clz=AbstractDungeon.class, method = "generateMap")
 public class CreateMimicRoomPatch {
 	@SpireInsertPatch(locator = Locator.class)
@@ -33,8 +34,6 @@ public class CreateMimicRoomPatch {
 	}
 
 	private static class Locator extends SpireInsertLocator {
-
-
 		@Override
 		public int[] Locate(CtBehavior ctBehavior) throws Exception {
 			Matcher finalMatcher = new Matcher.MethodCallMatcher(MapGenerator.class, "toString");
