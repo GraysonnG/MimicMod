@@ -52,14 +52,14 @@ public class Mimic extends AbstractMonster{
     private static final int A_HP = 15;
 	private static final int[] LV_ARMOR_MAX = {5, 10, 15};
 	private static final int[] LV_ARMOR_GAIN = {4, 5, 5};
-	private static final int[] LV_DOUBLESTRIKE_DMG = {2, 2, 3};
+	private static final int[] LV_DOUBLESTRIKE_DMG = {2, 3, 4};
 	private static final int A_DOUBLESTRIKE_DMG = 1;
 	private static final int[] LV_BIGSTRIKE_DMG = {9, 11, 13};
 	private static final int A_BIGSTRIKE_DMG = 2;
 	private static final int[] LV_STR = {1, 1, 2};
 	private static final int[] LV_THORN = {1, 2, 2};
 	private static final int[] LV_DAZE = {1, 2, 2};
-	private static final int[] LV_MAD = {2, 3, 3};
+	private static final int[] LV_MAD = {2, 2, 3};
 	private int lv;
     private int lid_armor_gain;
     private int lid_armor_max;
@@ -244,7 +244,9 @@ public class Mimic extends AbstractMonster{
             }
             case MAD_MIMICRY: {
 				AbstractDungeon.actionManager.addToBottom(new ApplyPowerAction(AbstractDungeon.player, this, new WeakPower(AbstractDungeon.player, this.mad_duration, true), this.mad_duration));
-				AbstractDungeon.actionManager.addToBottom(new ApplyPowerAction(AbstractDungeon.player, this, new FrailPower(AbstractDungeon.player, this.mad_duration, true), this.mad_duration));
+				if (AbstractDungeon.bossCount > 0) {
+					AbstractDungeon.actionManager.addToBottom(new ApplyPowerAction(AbstractDungeon.player, this, new FrailPower(AbstractDungeon.player, this.mad_duration, true), this.mad_duration));
+				}
 				AbstractDungeon.actionManager.addToBottom(new MakeTempCardInDiscardAndDeckAction(new MimicStatus()));
 				AbstractDungeon.actionManager.addToBottom(new RollMoveAction(this));
                 break;
@@ -269,7 +271,7 @@ public class Mimic extends AbstractMonster{
 			return;
 		}
 		if (this.lastMove(DOUBLE_STRIKE)) {
-			if (num > 66 || GameActionManager.turn < 5 && num > 20) {
+			if (num > 66 || (GameActionManager.turn > 5 || (this.hasPower(StrengthPower.POWER_ID) && this.getPower(StrengthPower.POWER_ID).amount < 0)) && num > 33) {
 				this.setMoveNow(BLADE_MIMICRY);
 			} else {
 				this.setMoveNow(MAD_MIMICRY);
