@@ -33,11 +33,7 @@ public class MimicStatus extends CustomCard
 
     @Override
     public void use(final AbstractPlayer p, final AbstractMonster m) {
-        if (p.hasRelic("Medical Kit")) {
-            this.useMedicalKit(p);
-        } else {
-			AbstractDungeon.actionManager.addToBottom(new MimicHandCardAction(AbstractDungeon.player, true));
-		}
+		AbstractDungeon.actionManager.addToBottom(new MimicHandCardAction(AbstractDungeon.player, true));
     }
     
     @Override
