@@ -10,6 +10,7 @@ import com.megacrit.cardcrawl.actions.animations.AnimateSlowAttackAction;
 import com.megacrit.cardcrawl.actions.animations.VFXAction;
 import com.megacrit.cardcrawl.actions.common.ApplyPowerAction;
 import com.megacrit.cardcrawl.actions.common.DamageAction;
+import com.megacrit.cardcrawl.actions.common.GainBlockAction;
 import com.megacrit.cardcrawl.actions.common.MakeTempCardInDiscardAction;
 import com.megacrit.cardcrawl.actions.common.MakeTempCardInDiscardAndDeckAction;
 import com.megacrit.cardcrawl.actions.common.MakeTempCardInDrawPileAction;
@@ -78,6 +79,7 @@ public class Mimic extends AbstractMonster{
     private static final byte MAD_MIMICRY = 4;
     private static final byte BIG_HIT = 5;
     private static final byte BOO = 6;
+    private int closeBlock;
     private boolean firstMove;
 
 	private MimicType mimType;
@@ -92,6 +94,7 @@ public class Mimic extends AbstractMonster{
 		super(NAME, ID, 80, 0.0f, 0.0f, 200f, 200f, null);
 		int lv = 0;
 		this.mimType = mimType;
+		this.closeBlock = 0;
 		switch(mimType){
 			case SMALL:
 				lv = 0;
@@ -119,6 +122,10 @@ public class Mimic extends AbstractMonster{
             this.setHp(HP[lv] - HP_DV + A_HP, HP[lv] - HP_DV + A_HP);
 			if (this.lv > 0) {
 				this.lid_artifact = 2;
+			}
+			this.closeBlock = this.lv * 2;
+			if (AbstractDungeon.ascensionLevel >= 18) {
+				this.closeBlock += 3;
 			}
         }
         else {
@@ -160,12 +167,15 @@ public class Mimic extends AbstractMonster{
 		offGuard.name = Mimic.DIALOG[0];
 		AbstractDungeon.actionManager.addToBottom(new ApplyPowerAction(AbstractDungeon.player, this, offGuard));
 		this.boo_surprise = AbstractDungeon.player.energy.energy - 1;
+		if (AbstractDungeon.ascensionLevel >= 18) {
+			AbstractDungeon.actionManager.addToBottom(new ApplyPowerAction(AbstractDungeon.player, this, new MimicSurprisePower(AbstractDungeon.player, this.boo_surprise, false), this.boo_surprise));
+		}
     }
 
 	private void setMoveNow(byte nextTurn) {
 		switch (nextTurn) {
             case CLOSE_LID: {
-				this.setMove(MOVES[0], nextTurn, Intent.BUFF);
+				this.setMove(MOVES[0], nextTurn, (this.closeBlock > 0) ? Intent.DEFEND_BUFF : Intent.BUFF);
 				break;
 			}
             case DOUBLE_STRIKE: {
@@ -212,6 +222,9 @@ public class Mimic extends AbstractMonster{
 				}
 				this.firstMove = false;
 				AbstractDungeon.actionManager.addToBottom(new ApplyPowerAction(this, this, new ArtifactPower(this, this.lid_artifact), this.lid_artifact));
+				if (this.closeBlock > 0) {
+					AbstractDungeon.actionManager.addToBottom(new GainBlockAction(this, this, this.closeBlock));
+				}
 				AbstractDungeon.actionManager.addToBottom(new RollMoveAction(this));
                 break;
             }
