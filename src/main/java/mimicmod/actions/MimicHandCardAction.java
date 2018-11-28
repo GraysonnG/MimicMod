@@ -35,12 +35,10 @@ public class MimicHandCardAction extends AbstractGameAction
                 return;
             }
             if (this.p.hand.size() == 1) {
-                this.amount = this.p.hand.size();
-                for (int tmp = this.p.hand.size(), i = 0; i < tmp; ++i) {
-                    final AbstractCard c = this.p.hand.getTopCard();
-					AbstractDungeon.actionManager.addToTop(new MakeTempCardInHandAction(c.makeStatEquivalentCopy()));
-                }
+                AbstractCard c = this.p.hand.getTopCard();
+                AbstractDungeon.actionManager.addToTop(new MakeTempCardInHandAction(c.makeStatEquivalentCopy()));
                 CardCrawlGame.dungeon.checkForPactAchievement();
+                this.isDone = true;
                 return;
             }
             if (!this.isRandom) {
